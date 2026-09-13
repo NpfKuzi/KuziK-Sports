@@ -83,7 +83,7 @@ selected_player = st.selectbox("Choose a Player to Analyze and Lock Into the Sys
 # --- PROCESS AUTOMATIC LEADERBOARD RATING MATRICES (FLATTENED ONE-LINER BLOCK) ---
 leaderboard_rows = []
 for k, v in LOCAL_MLB_DATABASE.items():
-leaderboard_rows.append({"Player Name": k.title(), "Position": v["pos"], "HR": int(v["hr"]), "RBI": int(v["rbi"]), "AVG": v["avg"], "OPS": v["ops"], "KUZI Rating": round((float(v["ops"]) * 500) + (float(v["avg"]) * 1000) + (int(v["hr"]) * 3) + (int(v["rbi"]) * 1.5), 1)})
+  leaderboard_rows.append({"Player Name": k.title(), "Position": v["pos"], "HR": int(v["hr"]), "RBI": int(v["rbi"]), "AVG": v["avg"], "OPS": v["ops"], "KUZI Rating": round((float(v["ops"]) * 500) + (float(v["avg"]) * 1000) + (int(v["hr"]) * 3) + (int(v["rbi"]) * 1.5), 1)})
 
 df_leaderboard = pd.DataFrame(leaderboard_rows).sort_values(by="KUZI Rating", ascending=False).reset_index(drop=True)
 df_leaderboard.index += 1
