@@ -91,7 +91,7 @@ selected_player = st.selectbox("Choose a Player to Analyze and Lock Into the Sys
 leaderboard_rows = []
 # Pull the top 200 players across the league sorted by OPS metrics
 import statsapi
-    live_api_data = statsapi.league_leader_data('onBasePlusSlugging', season=2025, limit=200)
+live_api_data = statsapi.league_leader_data('onBasePlusSlugging', season=2025, limit=200)
 for row in live_api_data:
     # The API returns data as a list: [rank, player_name, team_name, stat_value]
     player_name = row[1]
