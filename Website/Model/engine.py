@@ -117,7 +117,7 @@ leaderboard_rows.append({
         "OPS": ops_value,
         "KUZI Rating": kuzi_calc
     })
-return pd.DataFrame(leaderboard_rows)
+    return pd.DataFrame(leaderboard_rows)
 
 # Execute the background automation system
 df_leaderboard = load_automated_league_stats()
