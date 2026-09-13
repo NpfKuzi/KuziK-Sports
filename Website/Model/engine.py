@@ -80,21 +80,10 @@ st.markdown("### 🎯 Global Profile Core Selector")
 sorted_names = sorted([n.title() for n in LOCAL_MLB_DATABASE.keys()])
 selected_player = st.selectbox("Choose a Player to Analyze and Lock Into the System Grid:", options=sorted_names, index=sorted_names.index("Aaron Judge"))
 
-# --- PROCESS AUTOMATIC LEADERBOARD RATING MATRICES ---
+# --- PROCESS AUTOMATIC LEADERBOARD RATING MATRICES (FLATTENED ONE-LINER BLOCK) ---
 leaderboard_rows = []
-for name, data in LOCAL_MLB_DATABASE.items():
-ops_v = float(data["ops"])
-avg_v = float(data["avg"])
-calc_score = round((ops_v * 500) + (avg_v * 1000) + (int(data["hr"]) * 3) + (int(data["rbi"]) * 1.5), 1)
-leaderboard_rows.append({
-"Player Name": name.title(),
-"Position": data["pos"],
-"HR": int(data["hr"]),
-"RBI": int(data["rbi"]),
-"AVG": data["avg"],
-"OPS": data["ops"],
-"KUZI Rating": calc_score
-})
+for k, v in LOCAL_MLB_DATABASE.items():
+leaderboard_rows.append({"Player Name": k.title(), "Position": v["pos"], "HR": int(v["hr"]), "RBI": int(v["rbi"]), "AVG": v["avg"], "OPS": v["ops"], "KUZI Rating": round((float(v["ops"]) * 500) + (float(v["avg"]) * 1000) + (int(v["hr"]) * 3) + (int(v["rbi"]) * 1.5), 1)})
 
 df_leaderboard = pd.DataFrame(leaderboard_rows).sort_values(by="KUZI Rating", ascending=False).reset_index(drop=True)
 df_leaderboard.index += 1
@@ -108,33 +97,20 @@ st.markdown("---")
 if selected_player:
 lookup_key = selected_player.lower()
 player_data = LOCAL_MLB_DATABASE[lookup_key]
-
 st.markdown(f"### 🔍 Deep Analysis Profile Card: {selected_player}")
 st.markdown(f"<div style='padding:12px; background-color:#1e3a8a; border-radius:8px; color:#f8fafc; font-weight:600; margin-bottom:20px;'>📊 Connected Identity: {selected_player} (ID: {player_data['id']})</div>", unsafe_allow_html=True)
-
 m1, m2 = st.columns(2)
 m1.metric("Games Played / Assigned Position", f"{player_data['games']} G | {player_data['pos']}")
 m2.metric("Batting Average (AVG)", player_data["avg"])
-
 m3, m4 = st.columns(2)
 m3.metric("On-Base Plus Slugging (OPS)", player_data["ops"])
 m4.metric("Production Output Volume", f"{player_data['hr']} HR / {player_data['rbi']} RBI")
-
 ops_val = float(player_data["ops"])
 avg_val = float(player_data["avg"])
 kuzi_score = round((ops_val * 500) + (avg_val * 1000) + (int(player_data["hr"]) * 3) + (int(player_data["rbi"]) * 1.5), 1)
-
 status_tag = "<span style='color:#ef4444; font-weight:800;'>ELITE LAYER</span>" if kuzi_score >= 750 else "<span style='color:#38bdf8; font-weight:800;'>STANDARD PRODUCTION</span>"
 badge_color = '#ef4444' if kuzi_score >= 750 else '#1e3a8a'
-
-st.markdown(f"""
-<div class="kuzi-badge-box" style="border-left-color: {badge_color};">
-<div style="font-size:0.9em; color:#9ca3af; text-transform:uppercase;">KUZI RATING SCORE</div>
-<div style="font-size:2.8em; font-weight:900; color:#ffffff; line-height:1em; margin-top:5px;">{kuzi_score}</div>
-<div style="font-size:1.1em; color:#ffffff; margin-top:10px;">Classification Status: {status_tag}</div>
-</div>
-""", unsafe_allow_html=True)
-
+st.markdown(f"""<div class="kuzi-badge-box" style="border-left-color: {badge_color};"><div style="font-size:0.9em; color:#9ca3af; text-transform:uppercase;">KUZI RATING SCORE</div><div style="font-size:2.8em; font-weight:900; color:#ffffff; line-height:1em; margin-top:5px;">{kuzi_score}</div><div style="font-size:1.1em; color:#ffffff; margin-top:10px;">Classification Status: {status_tag}</div></div>""", unsafe_allow_html=True)
 if kuzi_score >= 750:
 st.balloons()
 
@@ -149,9 +125,4 @@ else:
 implied_prob = 100 / (odds_input + 100)
 pct_format = round(implied_prob * 100, 1)
 
-st.markdown(f"""
-<div class="calc-container">
-<div style="font-size:0.9em; color:#9ca3af; text-transform:uppercase;">Break-Even Win Probability Required</div>
-<div style="font-size:3em; font-weight:900; color:#38bdf8; margin-top:5px;">{pct_format}%</div>
-</div>
-""", unsafe_allow_html=True)
+st.markdown(f"""<div class="calc-container"><div style="font-size:0.9em; color:#9ca3af; text-transform:uppercase;">Break-Even Win Probability Required</div><div style="font-size:3em; font-weight:900; color:#38bdf8; margin-top:5px;">{pct_format}%</div></div>""", unsafe_allow_html=True)
