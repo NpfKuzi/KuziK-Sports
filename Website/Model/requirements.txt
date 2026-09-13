@@ -1,2 +1,2 @@
-MLB-StatsAPI
-pandas
+import StatsAPI
+import streamlit as st
