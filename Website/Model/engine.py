@@ -1,4 +1,4 @@
-import streamlit as st
+import statsapi
 import pandas as pd
 import random
 
@@ -82,8 +82,28 @@ selected_player = st.selectbox("Choose a Player to Analyze and Lock Into the Sys
 
 # --- PROCESS AUTOMATIC LEADERBOARD RATING MATRICES (FLATTENED ONE-LINER BLOCK) ---
 leaderboard_rows = []
-for k, v in LOCAL_MLB_DATABASE.items():
-  leaderboard_rows.append({"Player Name": k.title(), "Position": v["pos"], "HR": int(v["hr"]), "RBI": int(v["rbi"]), "AVG": v["avg"], "OPS": v["ops"], "KUZI Rating": round((float(v["ops"]) * 500) + (float(v["avg"]) * 1000) + (int(v["hr"]) * 3) + (int(v["rbi"]) * 1.5), 1)})
+# Pull the top 200 players across the league sorted by OPS metrics
+live_api_data = statsapi.league_leader_data('onBasePlusSlugging', season=2025, limit=200)
+
+for row in live_api_data:
+# The API returns data as a list: [rank, player_name, team_name, stat_value]
+player_name = row[1]
+team_name = row[2]
+ops_value = float(row[3])
+
+# Dynamically compute your KUZI Rating right here using live metrics!
+kuzi_calc = ops_value * 1000
+
+leaderboard_rows.append({
+"Player Name": player_name,
+"Position": team_name, # Temporary placeholder using team name text
+"HR": 0,
+"RBI": 0,
+"AVG": 0.000,
+"OPS": ops_value,
+"KUZI Rating": kuzi_calc
+})
+
 
 df_leaderboard = pd.DataFrame(leaderboard_rows).sort_values(by="KUZI Rating", ascending=False).reset_index(drop=True)
 df_leaderboard.index += 1
