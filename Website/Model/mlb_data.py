@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
 import random
 
 # 1. Page Configuration Setup
@@ -117,10 +116,8 @@ df_leaderboard.index += 1
 # --- CONDITIONAL LAYOUT SWITCH IF SIMULATOR RUNS ---
 if sim_clicked:
     st.markdown(f"### 🏟️ Simulation Projection Report: {away_team_sel} vs. {home_team_sel}")
-    
     t1 = LOCAL_TEAM_DATABASE[away_team_sel]
     t2 = LOCAL_TEAM_DATABASE[home_team_sel]
-    
     random.seed(len(away_team_sel) + len(home_team_sel))
     
     away_base_runs = (t1["offense_rating"] * offense_weight) + ((10 - t2["defense_rating"]) * defense_weight)
@@ -128,7 +125,6 @@ if sim_clicked:
     
     away_final_score = max(0, int(round(random.gauss(away_base_runs, 1.8))))
     home_final_score = max(0, int(round(random.gauss(home_base_runs, 1.8))))
-    
     if away_final_score == home_final_score:
         home_final_score += 1 
         
@@ -149,9 +145,10 @@ if sim_clicked:
     """, unsafe_allow_html=True)
     st.markdown("---")
 
-# --- COMPLETELY FLATTENED MAIN DASHBOARD COMPONENT ---
+# --- SECTION 1: GLOBAL LEADERBOARD DISPLAY ---
 st.markdown("### 🏆 Global KUZI Index Leaderboard")
 st.dataframe(df_leaderboard, use_container_width=True)
+st.markdown("---")
 
-st.markdown("### 📊 Valuation Index Variance Comparison")
-# FIXED: Re-sealed the open parenthesis below to execute cleanly
+# --- SECTION 2: AUTOMATIC DROP-DOWN SEARCH SELECTION PANEL ---
+st.markdown("### 🔍 Player Deep Analysis Profile")
