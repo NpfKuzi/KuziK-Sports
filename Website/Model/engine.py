@@ -128,9 +128,8 @@ if   selected_player:
     player_data = player_match.iloc[0] if not player_match.empty else None
 
 st.markdown(f"### 🔍 Deep Analysis Profile Card: {selected_player}")
-st.markdown(f"<div style='padding:12px; background-color:#1e3a8a; border-radius:8px; color:#f8fafc; font-weight:600; margin-bottom:20px;'>📊 Connected Identity: {selected_player} (ID: {player_data['id']})</div>", unsafe_allow_html=True)
 m1, m2 = st.columns(2)
-st.markdown(f"**Team / Assigned Position:** {player_data['Position']}")
+st.markdown(f"**Team / Assigned Position:*** {player_data['Position']}")
 m2.metric("Batting Average (AVG)", f"{player_data['AVG']:.3f}" if isinstance(player_data['AVG'], float) else str(player_data['AVG']))
 st.markdown("---")
 m3.metric("On-Base Plus Slugging (OPS)", f"{player_data['OPS']:.3f}" if isinstance(player_data['OPS'], float) else str(player_data['OPS']))
