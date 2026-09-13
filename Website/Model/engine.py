@@ -134,11 +134,11 @@ st.markdown("---")
 m3.metric("On-Base Plus Slugging (OPS)", f"{player_data['OPS']:.3f}" if isinstance(player_data['OPS'], float) else str(player_data['OPS']))
 m4.metric("Production Output Volume", f"{player_data['HR']} HR / {player_data['RBI']} RBI")
 
-    ops_val = float(player_data["OPS"])
-    avg_val = float(player_data["AVG"])
-    kuzi_score = round(float(player_data["KUZI Rating"]), 1)
-    badge_color = '#ef4444' if kuzi_score >= 750 else '#1e3a8a'
-    st.markdown(f"""<div class="kuzi-badge-box" style="border-left-color: {badge_color};"><div style="font-size:0.9em; color:#9ca3af; text-transform:uppercase;">KUZI RATING SCORE</div><div style="font-size:2.8em; font-weight:900; color:#ffffff; line-height:1em; margin-top:5px;">{kuzi_score}</div><div style="font-size:1.1em; color:#ffffff; margin-top:10px;">Classification Status: {status_tag}</div></div>""", unsafe_allow_html=True)
+ops_val = float(player_data["OPS"])
+avg_val = float(player_data["AVG"])
+kuzi_score = round(float(player_data["KUZI Rating"]), 1)
+badge_color = '#ef4444' if kuzi_score >= 750 else '#1e3a8a'
+st.markdown(f"""<div class="kuzi-badge-box" style="border-left-color: {badge_color};"><div style="font-size:0.9em; color:#9ca3af; text-transform:uppercase;">KUZI RATING SCORE</div><div style="font-size:2.8em; font-weight:900; color:#ffffff; line-height:1em; margin-top:5px;">{kuzi_score}</div><div style="font-size:1.1em; color:#ffffff; margin-top:10px;">Classification Status: {status_tag}</div></div>""", unsafe_allow_html=True)
 if kuzi_score >= 750:
     st.balloons()
 
