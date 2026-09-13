@@ -8,6 +8,54 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pandas as pd
 import random
 
+# --- PREMIUM DARK GRID UI THEME ENGINE ---
+st.markdown("""
+<style>
+/* Main Background & Text Color */
+.stApp {
+background-color: #0d0e12 !important;
+color: #f8fafc !important;
+}
+
+/* Header & Title Customization */
+h1, h2, h3 {
+color: #ffffff !important;
+font-family: 'Inter', sans-serif;
+font-weight: 800 !important;
+letter-spacing: -0.5px;
+}
+
+/* Clean Cards for Profiles and Calculators */
+div[data-testid="stVerticalBlock"] > div {
+background-color: #161920;
+border: 1px solid #242936;
+border-radius: 12px;
+padding: 20px;
+box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+}
+
+/* Input Boxes & Dropdowns */
+div[data-baseweb="select"], div[data-baseweb="input"] {
+background-color: #1e2330 !important;
+border: 1px solid #333b4f !important;
+border-radius: 8px !important;
+}
+
+/* Interactive Metric Blocks */
+div[data-testid="stMetricValue"] {
+color: #10b981 !important; /* Premium Sportsbook Neon Green */
+font-size: 32px !important;
+font-weight: 700 !important;
+}
+
+div[data-testid="stMetricLabel"] {
+color: #94a3b8 !important; /* Soft muted gray text */
+font-size: 14px !important;
+text-transform: uppercase;
+letter-spacing: 0.5px;
+}
+</style>
+""", unsafe_allow_html=True)
 
 # 1. Page Configuration Setup
 st.set_page_config(page_title="KUZI Sports Analytics", page_icon="⚾", layout="wide")
