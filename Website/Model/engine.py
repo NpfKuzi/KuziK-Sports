@@ -95,7 +95,7 @@ st.markdown("---")
 
 # --- SECTION 3: PLAYER DEEP ANALYSIS PROFILE ---
 if   selected_player:
-lookup_key = selected_player.lower()
+  lookup_key = selected_player.lower()
 player_data = LOCAL_MLB_DATABASE[lookup_key]
 st.markdown(f"### 🔍 Deep Analysis Profile Card: {selected_player}")
 st.markdown(f"<div style='padding:12px; background-color:#1e3a8a; border-radius:8px; color:#f8fafc; font-weight:600; margin-bottom:20px;'>📊 Connected Identity: {selected_player} (ID: {player_data['id']})</div>", unsafe_allow_html=True)
