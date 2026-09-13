@@ -90,17 +90,17 @@ st.markdown("""
 # # 4. Live MLB Automated Feed Engine with 24-Hour Cache Control
 @st.cache_data(ttl=86400) # Automatically updates every 24 hours on autopilot
 def load_automated_league_stats():
-import statsapi
-import random
+    import statsapi
+    import random
 leaderboard_rows = []
 
 # Pulls the top 150 current active league players via live data stream
 live_api_data = statsapi.league_leader_data('onBasePlusSlugging', season=2025, limit=150)
 
 for row in live_api_data:
-player_name = row
-team_name = row
-ops_value = float(row) if row else 0.0
+    player_name = row
+    team_name = row
+    ops_value = float(row) if row else 0.0
 
 # Temporary dynamic metrics until we link the deeper API sub-arrays
 hr_value = random.randint(15, 45)
@@ -116,7 +116,7 @@ leaderboard_rows.append({
 "AVG": avg_value,
 "OPS": ops_value,
 "KUZI Rating": kuzi_calc
-})
+    })
 return pd.DataFrame(leaderboard_rows)
 
 # Execute the background automation system
