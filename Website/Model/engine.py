@@ -86,20 +86,20 @@ leaderboard_rows = []
 live_api_data = statsapi.league_leader_data('onBasePlusSlugging', season=2025, limit=200)
 for row in live_api_data:
     # The API returns data as a list: [rank, player_name, team_name, stat_value]
-player_name = row[1]
-team_name = row[2]
-ops_value = float(row[3])
+    player_name = row[1]
+    team_name = row[2]
+    ops_value = float(row[3])
 
-# Dynamically compute your KUZI Rating right here using live metrics!
-kuzi_calc = ops_value * 1000
+    # Dynamically compute your KUZI Rating right here using live metrics!
+    kuzi_calc = ops_value * 1000
 
-leaderboard_rows.append({
-"Player Name": player_name,
-"Position": team_name, # Temporary placeholder using team name text
-"HR": 0,
-"RBI": 0,
-"AVG": 0.000,
-"OPS": ops_value,
+    leaderboard_rows.append({
+    "Player Name": player_name,
+    "Position": team_name, # Temporary placeholder using team name text
+    "HR": 0,
+    "RBI": 0,
+    "AVG": 0.000,
+    "OPS": ops_value,
 "KUZI Rating": kuzi_calc
 })
 
