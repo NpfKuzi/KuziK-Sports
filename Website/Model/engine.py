@@ -96,7 +96,37 @@ def load_automated_league_stats():
 leaderboard_rows = []
 
 # Pulls the top 150 current active league players via live data stream
-live_api_data = statsapi.league_leader_data('onBasePlusSlugging', season=2025, limit=150)
+live_api_data = leader_url = "https://statsapi.mlb.com/api/v1/stats"
+
+params = {
+"stats": "season",
+"group": "hitting",
+"season": current_year,
+"sportIds": 1,
+"limit": 150,
+"sortStat": "onBasePlusSlugging"
+}
+
+response = requests.get(leader_url, params=params, timeout=20)
+response.raise_for_status()
+
+leader_data = response.json()
+
+splits = leader_data.get("stats", [{}])[0].get("splits", [])
+
+live_api_data = []
+
+for rank, split in enumerate(splits, start=1):
+player = split.get("player", {})
+team = split.get("team", {})
+stat = split.get("stat", {})
+
+live_api_data.append([
+rank,
+player.get("fullName", "Unknown"),
+team.get("name", "Unknown"),
+stat.get("ops", "")
+])
 
 for row in live_api_data:
     player_name = row
