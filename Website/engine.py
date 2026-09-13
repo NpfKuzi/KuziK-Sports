@@ -32,7 +32,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# 4. Master Local Databases
+# 4. Master Local Databases (Sanitized Data Structure)
 LOCAL_MLB_DATABASE = {
 "aaron judge": {"id": "592450", "pos": "Outfielder", "games": 158, "avg": ".322", "ops": "1.159", "hr": 58, "rbi": 144},
 "shohei ohtani": {"id": "660271", "pos": "Designated Hitter", "games": 159, "avg": ".310", "ops": "1.036", "hr": 54, "rbi": 130},
@@ -75,7 +75,13 @@ LOCAL_TEAM_DATABASE = {
 "Philadelphia Phillies": {"offense_rating": 8.5, "defense_rating": 8.4}
 }
 
-# --- PROCESS LEADERBOARD ---
+# --- SECTION 1: MASTER CONTROLLER SELECT BOX ---
+st.markdown("### 🎯 Global Profile Core Selector")
+sorted_names = sorted([n.title() for n in LOCAL_MLB_DATABASE.keys()])
+# This control box sits right at the top and manages the entire app flawlessly
+selected_player = st.selectbox("Choose a Player to Analyze and Lock Into the System Grid:", options=sorted_names, index=sorted_names.index("Aaron Judge"))
+
+# --- PROCESS AUTOMATIC LEADERBOARD RATING MATRICES ---
 leaderboard_rows = []
 for name, data in LOCAL_MLB_DATABASE.items():
 ops_v = float(data["ops"])
@@ -92,62 +98,52 @@ leaderboard_rows.append({
 })
 
 df_leaderboard = pd.DataFrame(leaderboard_rows).sort_values(by="KUZI Rating", ascending=False).reset_index(drop=True)
+df_leaderboard.index += 1
 
-st.markdown("### 🏆 Global KUZI Index Leaderboard (Click a Row to Select a Player)")
-
-# 🌟 INTERACTIVE UPGRADE: Using st.dataframe with selection mode enabled!
-selected_rows = st.dataframe(
-df_leaderboard,
-use_container_width=True,
-on_select="rerun",
-selection_mode="single-row"
-)
-
+# --- SECTION 2: GLOBAL LEADERBOARD DISPLAY ---
+st.markdown("### 🏆 Global KUZI Index Leaderboard")
+st.dataframe(df_leaderboard, use_container_width=True)
 st.markdown("---")
 
-# Determine which player is chosen (either via row click or default to Aaron Judge)
-default_player = "Aaron Judge"
-if selected_rows and selected_rows.get("selection", {}).get("rows"):
-row_idx = selected_rows["selection"]["rows"][0]
-default_player = df_leaderboard.iloc[row_idx]["Player Name"]
-
-# --- SECTION 2: PROFILE DISPLAY PANEL ---
-st.markdown("### 🔍 Player Deep Analysis Profile")
-sorted_names = sorted([n.title() for n in LOCAL_MLB_DATABASE.keys()])
-selected_player = st.selectbox(
-"Select Target Athlete Profile:",
-options=sorted_names,
-index=sorted_names.index(default_player)
-)
-
+# --- SECTION 3: PLAYER DEEP ANALYSIS PROFILE (SNAP-UPDATED FROM BOX ABOVE) ---
 if selected_player:
 lookup_key = selected_player.lower()
 player_data = LOCAL_MLB_DATABASE[lookup_key]
-st.markdown(f"<div style='padding:12px; background-color:#1e3a8a; border-radius:8px; color:#f8fafc; font-weight:600; margin-bottom:20px;'>📊 Asset Analysis: {selected_player}</div>", unsafe_allow_html=True)
+
+st.markdown(f"### 🔍 Deep Analysis Profile Card: {selected_player}")
+st.markdown(f"<div style='padding:12px; background-color:#1e3a8a; border-radius:8px; color:#f8fafc; font-weight:600; margin-bottom:20px;'>📊 Connected Identity: {selected_player} (ID: {player_data['id']})</div>", unsafe_allow_html=True)
+
 m1, m2 = st.columns(2)
-m1.metric("Games / Position", f"{player_data['games']} G | {player_data['pos']}")
-m2.metric("Batting Average", player_data["avg"])
+m1.metric("Games Played / Assigned Position", f"{player_data['games']} G | {player_data['pos']}")
+m2.metric("Batting Average (AVG)", player_data["avg"])
+
 m3, m4 = st.columns(2)
 m3.metric("On-Base Plus Slugging (OPS)", player_data["ops"])
-m4.metric("Production Output", f"{player_data['hr']} HR / {player_data['rbi']} RBI")
+m4.metric("Production Output Volume", f"{player_data['hr']} HR / {player_data['rbi']} RBI")
+
 ops_val = float(player_data["ops"])
 avg_val = float(player_data["avg"])
 kuzi_score = round((ops_val * 500) + (avg_val * 1000) + (int(player_data["hr"]) * 3) + (int(player_data["rbi"]) * 1.5), 1)
+
 status_tag = "<span style='color:#ef4444; font-weight:800;'>ELITE LAYER</span>" if kuzi_score >= 750 else "<span style='color:#38bdf8; font-weight:800;'>STANDARD PRODUCTION</span>"
 badge_color = '#ef4444' if kuzi_score >= 750 else '#1e3a8a'
+
 st.markdown(f"""
 <div class="kuzi-badge-box" style="border-left-color: {badge_color};">
 <div style="font-size:0.9em; color:#9ca3af; text-transform:uppercase;">KUZI RATING SCORE</div>
 <div style="font-size:2.8em; font-weight:900; color:#ffffff; line-height:1em; margin-top:5px;">{kuzi_score}</div>
-<div style="font-size:1.1em; color:#ffffff; margin-top:10px;">Classification: {status_tag}</div>
+<div style="font-size:1.1em; color:#ffffff; margin-top:10px;">Classification Status: {status_tag}</div>
 </div>
 """, unsafe_allow_html=True)
 
+if kuzi_score >= 750:
+st.balloons()
+
 st.markdown("---")
 
-# --- SECTION 3: PROBABILITY BETTING CALCULATOR PANEL ---
+# --- SECTION 4: PROBABILITY BETTING CALCULATOR PANEL ---
 st.markdown("### 🧮 Implied Probability Valuation Calculator")
-odds_input = st.number_input("Enter American Moneyline Odds:", value=-110, step=5)
+odds_input = st.number_input("Enter American Moneyline Odds lines for reference:", value=-110, step=5)
 if odds_input < 0:
 implied_prob = (-odds_input) / (-odds_input + 100)
 else:
@@ -159,4 +155,3 @@ st.markdown(f"""
 <div style="font-size:0.9em; color:#9ca3af; text-transform:uppercase;">Break-Even Win Probability Required</div>
 <div style="font-size:3em; font-weight:900; color:#38bdf8; margin-top:5px;">{pct_format}%</div>
 </div>
-""", unsafe_allow_html=True)
