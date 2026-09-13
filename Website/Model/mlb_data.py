@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import plotly.express as px
 
 # 1. Page Configuration Setup
 st.set_page_config(page_title="KUZI Sports Analytics", page_icon="⚾", layout="wide")
@@ -61,9 +62,32 @@ for name, data in LOCAL_MLB_DATABASE.items():
 df_leaderboard = pd.DataFrame(leaderboard_rows).sort_values(by="KUZI Rating", ascending=False).reset_index(drop=True)
 df_leaderboard.index += 1 # Set index rankings to start cleanly from 1
 
-# Render Leaderboard Display Panel
-st.markdown("### 🏆 Global KUZI Index Leaderboard")
-st.dataframe(df_leaderboard, use_container_width=True)
+# Split visual layout into Leaderboard Table and Chart Matrix side-by-side
+col_table, col_chart = st.columns([1, 1])
+
+with col_table:
+    st.markdown("### 🏆 Global KUZI Index Leaderboard")
+    st.dataframe(df_leaderboard, use_container_width=True)
+
+with col_chart:
+    st.markdown("### 📊 Valuation Index Variance Comparison")
+    # Build an interactive Plotly bar chart matrix matching the dashboard palette
+    fig = px.bar(
+        df_leaderboard, 
+        x="KUZI Rating", 
+        y="Player Name", 
+        orientation="h",
+        color="KUZI Rating",
+        color_continuous_scale=["#1e3a8a", "#7f1d1d"]
+    )
+    fig.update_layout(
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        font_color="#ffffff",
+        yaxis={"categoryorder": "total ascending"}
+    )
+    st.plotly_chart(fig, use_container_width=True)
+
 st.markdown("---")
 
 # 5. Interactive Deep Search Bar Input Field
