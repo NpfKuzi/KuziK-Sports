@@ -1,2 +1,2 @@
-import statsapi
-import streamlit as st
+streamlit
+statsapi
