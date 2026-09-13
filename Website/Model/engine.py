@@ -109,14 +109,14 @@ avg_value = round(random.uniform(0.240, 0.320), 3)
 kuzi_calc = (ops_value * 1000) + (hr_value * 1.5)
 
 leaderboard_rows.append({
-"Player Name": player_name,
-"Position": team_name,
-"HR": hr_value,
-"RBI": rbi_value,
-"AVG": avg_value,
-"OPS": ops_value,
-"KUZI Rating": kuzi_calc
-    })
+    "Player Name": player_name,
+    "Position": team_name,
+    "HR": hr_value,
+    "RBI": rbi_value,
+    "AVG": avg_value,
+    "OPS": ops_value,
+    "KUZI Rating": kuzi_calc
+})
 return pd.DataFrame(leaderboard_rows)
 
 # Execute the background automation system
