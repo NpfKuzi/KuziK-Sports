@@ -19,6 +19,7 @@ st.markdown("""
     div[data-testid="stMetricValue"] { font-size: 2.2em !important; font-weight: 700 !important; color: #38bdf8 !important; }
     div[data-testid="stMetricLabel"] { font-size: 0.95em !important; color: #9ca3af !important; text-transform: uppercase; }
     .kuzi-badge-box { background: #111827; border-left: 5px solid #ef4444; padding: 20px; border-radius: 8px; margin-top: 15px; }
+    .calc-container { background-color: #1f2937; padding: 20px; border-radius: 10px; border-top: 4px solid #38bdf8; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -60,10 +61,10 @@ for name, data in LOCAL_MLB_DATABASE.items():
 
 # Convert data and rank by rating from high to low
 df_leaderboard = pd.DataFrame(leaderboard_rows).sort_values(by="KUZI Rating", ascending=False).reset_index(drop=True)
-df_leaderboard.index += 1 # Set index rankings to start cleanly from 1
+df_leaderboard.index += 1 
 
 # Split visual layout into Leaderboard Table and Chart Matrix side-by-side
-col_table, col_chart = st.columns([1, 1])
+col_table, col_chart = st.columns(2)
 
 with col_table:
     st.markdown("### 🏆 Global KUZI Index Leaderboard")
@@ -71,7 +72,6 @@ with col_table:
 
 with col_chart:
     st.markdown("### 📊 Valuation Index Variance Comparison")
-    # Build an interactive Plotly bar chart matrix matching the dashboard palette
     fig = px.bar(
         df_leaderboard, 
         x="KUZI Rating", 
@@ -84,50 +84,79 @@ with col_chart:
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         font_color="#ffffff",
-        yaxis={"categoryorder": "total ascending"}
+        yaxis={"categoryorder": "total ascending"},
+        margin=dict(l=20, r=20, t=20, b=20)
     )
     st.plotly_chart(fig, use_container_width=True)
 
 st.markdown("---")
 
-# 5. Interactive Deep Search Bar Input Field
-player_query = st.text_input("🔍 Select or Enter MLB Player Name for Deep Analysis Profile:", value="Aaron Judge")
+# 5. Interactive Deep Search Bar Input Field & Betting Analytics Engine Splits
+c_left, c_right = st.columns(2)
 
-if player_query:
-    lookup_key = player_query.strip().lower()
+with c_left:
+    st.markdown("### 🔍 Player Deep Analysis Profile")
+    player_query = st.text_input("Select or Enter MLB Player Name:", value="Aaron Judge")
+
+    if player_query:
+        lookup_key = player_query.strip().lower()
+        
+        if lookup_key in LOCAL_MLB_DATABASE:
+            player_data = LOCAL_MLB_DATABASE[lookup_key]
+            
+            st.markdown(f"<div style='padding:12px; background-color:#1e3a8a; border-radius:8px; color:#f8fafc; font-weight:600; margin-bottom:20px;'>📊 Asset Analysis: {player_query.title()}</div>", unsafe_allow_html=True)
+            
+            # Render Metrics Grid
+            m1, m2 = st.columns(2)
+            m1.metric("Games / Position", f"{player_data['games']} G | {player_data['pos']}")
+            m2.metric("Batting Average", player_data["avg"])
+            
+            m3, m4 = st.columns(2)
+            m3.metric("On-Base Plus Slugging (OPS)", player_data["ops"])
+            m4.metric("Production Output", f"{player_data['hr']} HR / {player_data['rbi']} RBI")
+            
+            # Recalculate rating score badge
+            ops_val = float(player_data["ops"])
+            avg_val = float(player_data["avg"])
+            kuzi_score = round((ops_val * 500) + (avg_val * 1000) + (player_data["hr"] * 3) + (player_data["rbi"] * 1.5), 1)
+            
+            status_tag = "<span style='color:#ef4444; font-weight:800;'>ELITE LAYER</span>" if kuzi_score >= 750 else "<span style='color:#38bdf8; font-weight:800;'>STANDARD PRODUCTION</span>"
+            badge_color = '#ef4444' if kuzi_score >= 750 else '#1e3a8a'
+            
+            st.markdown(f"""
+                <div class="kuzi-badge-box" style="border-left-color: {badge_color};">
+                    <div style="font-size:0.9em; color:#9ca3af; text-transform:uppercase;">KUZI RATING SCORE</div>
+                    <div style="font-size:2.8em; font-weight:900; color:#ffffff; line-height:1em; margin-top:5px;">{kuzi_score}</div>
+                    <div style="font-size:1.1em; color:#ffffff; margin-top:10px;">Classification: {status_tag}</div>
+                </div>
+            """, unsafe_allow_html=True)
+            
+            if kuzi_score >= 750:
+                st.balloons()
+        else:
+            st.warning(f"⚠️ Profile '{player_query}' is currently unindexed.")
+
+with c_right:
+    st.markdown("### 🧮 Implied Probability Valuation Calculator")
+    st.write("Convert American Odds lines instantly to identify break-even baseline targets.")
     
-    if lookup_key in LOCAL_MLB_DATABASE:
-        player_data = LOCAL_MLB_DATABASE[lookup_key]
-        
-        st.markdown(f"<div style='padding:12px; background-color:#1e3a8a; border-radius:8px; color:#f8fafc; font-weight:600; margin-bottom:20px;'>📊 Analysis Profile: {player_query.title()} (ID: {player_data['id']}) | Position: {player_data['pos']}</div>", unsafe_allow_html=True)
-        
-        # Render Metrics Grid
-        m1, m2, m3, m4 = st.columns(4)
-        m1.metric("Games Played", player_data["games"])
-        m2.metric("Batting Average", player_data["avg"])
-        m3.metric("On-Base Plus Slugging (OPS)", player_data["ops"])
-        m4.metric("Production Output", f"{player_data['hr']} HR / {player_data['rbi']} RBI")
-        
-        # Recalculate deep score representation badge
-        ops_val = float(player_data["ops"])
-        avg_val = float(player_data["avg"])
-        kuzi_score = round((ops_val * 500) + (avg_val * 1000) + (player_data["hr"] * 3) + (player_data["rbi"] * 1.5), 1)
-        
-        st.markdown("<br>", unsafe_allow_html=True)
-        st.markdown("### 🏆 Analytics Index Summary")
-        
-        status_tag = "<span style='color:#ef4444; font-weight:800;'>ELITE LEVEL PERFORMANCE</span>" if kuzi_score >= 750 else "<span style='color:#38bdf8; font-weight:800;'>STANDARD PRODUCTION COMPONENT</span>"
-        badge_color = '#ef4444' if kuzi_score >= 750 else '#1e3a8a'
-        
-        st.markdown(f"""
-            <div class="kuzi-badge-box" style="border-left-color: {badge_color};">
-                <div style="font-size:0.9em; color:#9ca3af; text-transform:uppercase;">KUZI RATING SCORE</div>
-                <div style="font-size:3.2em; font-weight:900; color:#ffffff; line-height:1em; margin-top:5px;">{kuzi_score}</div>
-                <div style="font-size:1.2em; color:#ffffff; margin-top:10px;">System Classification: {status_tag}</div>
-            </div>
-        """, unsafe_allow_html=True)
-        
-        if kuzi_score >= 750:
-            st.balloons()
+    # User inputs a standard betting line slider/number field
+    odds_input = st.number_input("Enter American Moneyline Odds (e.g., -110, +150):", value=-110, step=5)
+    
+    # Calculate break-even implied percentage mathematically
+    if odds_input < 0:
+        implied_prob = (-odds_input) / (-odds_input + 100)
     else:
-        st.warning(f"⚠️ Profile '{player_query}' is currently unindexed in the sandbox core registry layer.")
+        implied_prob = 100 / (odds_input + 100)
+        
+    pct_format = round(implied_prob * 100, 1)
+    
+    st.markdown(f"""
+        <div class="calc-container">
+            <div style="font-size:0.9em; color:#9ca3af; text-transform:uppercase;">Break-Even Win Probability Required</div>
+            <div style="font-size:3em; font-weight:900; color:#38bdf8; margin-top:5px;">{pct_format}%</div>
+            <p style="font-size:0.95em; color:#cbd5e1; margin-top:10px;">
+                If your proprietary analytical model projects this matchup's success rate to be higher than <b>{pct_format}%</b>, the selection holds positive long-term expected value (+EV).
+            </p>
+        </div>
+    """, unsafe_allow_html=True)
