@@ -1,3 +1,4 @@
+import StatsAPI
 import streamlit as st
 import sys
 import os
