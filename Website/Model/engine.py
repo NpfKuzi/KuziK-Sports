@@ -112,7 +112,7 @@ status_tag = "<span style='color:#ef4444; font-weight:800;'>ELITE LAYER</span>" 
 badge_color = '#ef4444' if kuzi_score >= 750 else '#1e3a8a'
 st.markdown(f"""<div class="kuzi-badge-box" style="border-left-color: {badge_color};"><div style="font-size:0.9em; color:#9ca3af; text-transform:uppercase;">KUZI RATING SCORE</div><div style="font-size:2.8em; font-weight:900; color:#ffffff; line-height:1em; margin-top:5px;">{kuzi_score}</div><div style="font-size:1.1em; color:#ffffff; margin-top:10px;">Classification Status: {status_tag}</div></div>""", unsafe_allow_html=True)
 if kuzi_score >= 750:
-st.balloons()
+  st.balloons()
 
 st.markdown("---")
 
@@ -120,7 +120,7 @@ st.markdown("---")
 st.markdown("### 🧮 Implied Probability Valuation Calculator")
 odds_input = st.number_input("Enter American Moneyline Odds lines for reference:", value=-110, step=5)
 if odds_input < 0:
-implied_prob = (-odds_input) / (-odds_input + 100)
+  implied_prob = (-odds_input) / (-odds_input + 100)
 else:
 implied_prob = 100 / (odds_input + 100)
 pct_format = round(implied_prob * 100, 1)
