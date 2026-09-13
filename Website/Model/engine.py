@@ -122,7 +122,7 @@ odds_input = st.number_input("Enter American Moneyline Odds lines for reference:
 if odds_input < 0:
   implied_prob = (-odds_input) / (-odds_input + 100)
 else:
-implied_prob = 100 / (odds_input + 100)
+  implied_prob = 100 / (odds_input + 100)
 pct_format = round(implied_prob * 100, 1)
 
 st.markdown(f"""<div class="calc-container"><div style="font-size:0.9em; color:#9ca3af; text-transform:uppercase;">Break-Even Win Probability Required</div><div style="font-size:3em; font-weight:900; color:#38bdf8; margin-top:5px;">{pct_format}%</div></div>""", unsafe_allow_html=True)
