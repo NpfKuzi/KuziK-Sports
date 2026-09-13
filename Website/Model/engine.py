@@ -1,6 +1,12 @@
-import statsapi
+import sys
+import os
+
+# Dynamically force Python to see modules installed in the main Website directory
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import pandas as pd
 import random
+
 
 # 1. Page Configuration Setup
 st.set_page_config(page_title="KUZI Sports Analytics", page_icon="⚾", layout="wide")
@@ -83,6 +89,7 @@ selected_player = st.selectbox("Choose a Player to Analyze and Lock Into the Sys
 # --- PROCESS AUTOMATIC LEADERBOARD RATING MATRICES (FLATTENED ONE-LINER BLOCK) ---
 leaderboard_rows = []
 # Pull the top 200 players across the league sorted by OPS metrics
+import statsapi
 live_api_data = statsapi.league_leader_data('onBasePlusSlugging', season=2025, limit=200)
 for row in live_api_data:
     # The API returns data as a list: [rank, player_name, team_name, stat_value]
@@ -90,18 +97,18 @@ for row in live_api_data:
     team_name = row[2]
     ops_value = float(row[3])
 
-# Dynamically compute your KUZI Rating right here using live metrics!
-kuzi_calc = ops_value * 1000
+    # Dynamically compute your KUZI Rating right here using live metrics!
+    kuzi_calc = ops_value * 1000
 
-leaderboard_rows.append({
-"Player Name": player_name,
-"Position": team_name, # Temporary placeholder using team name text
-"HR": 0,
-"RBI": 0,
-"AVG": 0.000,
-"OPS": ops_value,
-"KUZI Rating": kuzi_calc
-})
+    leaderboard_rows.append({
+    "Player Name": player_name,
+    "Position": team_name, # Temporary placeholder using team name text
+    "HR": 0,
+    "RBI": 0,
+    "AVG": 0.000,
+    "OPS": ops_value,
+    "KUZI Rating": kuzi_calc
+    })
 
 
 df_leaderboard = pd.DataFrame(leaderboard_rows).sort_values(by="KUZI Rating", ascending=False).reset_index(drop=True)
@@ -114,24 +121,26 @@ st.markdown("---")
 
 # --- SECTION 3: PLAYER DEEP ANALYSIS PROFILE ---
 if   selected_player:
-  lookup_key = selected_player.lower()
-player_data = LOCAL_MLB_DATABASE[lookup_key]
+ # Look up the selected player's row inside your live data table
+player_match = df_leaderboard[df_leaderboard["Player Name"] == selected_player]
+player_data = player_match.iloc[0] if not player_match.empty else None
+
 st.markdown(f"### 🔍 Deep Analysis Profile Card: {selected_player}")
 st.markdown(f"<div style='padding:12px; background-color:#1e3a8a; border-radius:8px; color:#f8fafc; font-weight:600; margin-bottom:20px;'>📊 Connected Identity: {selected_player} (ID: {player_data['id']})</div>", unsafe_allow_html=True)
 m1, m2 = st.columns(2)
-m1.metric("Games Played / Assigned Position", f"{player_data['games']} G | {player_data['pos']}")
-m2.metric("Batting Average (AVG)", player_data["avg"])
-m3, m4 = st.columns(2)
-m3.metric("On-Base Plus Slugging (OPS)", player_data["ops"])
-m4.metric("Production Output Volume", f"{player_data['hr']} HR / {player_data['rbi']} RBI")
-ops_val = float(player_data["ops"])
-avg_val = float(player_data["avg"])
-kuzi_score = round((ops_val * 500) + (avg_val * 1000) + (int(player_data["hr"]) * 3) + (int(player_data["rbi"]) * 1.5), 1)
-status_tag = "<span style='color:#ef4444; font-weight:800;'>ELITE LAYER</span>" if kuzi_score >= 750 else "<span style='color:#38bdf8; font-weight:800;'>STANDARD PRODUCTION</span>"
-badge_color = '#ef4444' if kuzi_score >= 750 else '#1e3a8a'
-st.markdown(f"""<div class="kuzi-badge-box" style="border-left-color: {badge_color};"><div style="font-size:0.9em; color:#9ca3af; text-transform:uppercase;">KUZI RATING SCORE</div><div style="font-size:2.8em; font-weight:900; color:#ffffff; line-height:1em; margin-top:5px;">{kuzi_score}</div><div style="font-size:1.1em; color:#ffffff; margin-top:10px;">Classification Status: {status_tag}</div></div>""", unsafe_allow_html=True)
+st.markdown(f"**Team / Assigned Position:** {player_data['Position']}")
+m2.metric("Batting Average (AVG)", f"{player_data['AVG']:.3f}" if isinstance(player_data['AVG'], float) else str(player_data['AVG']))
+st.markdown("---")
+m3.metric("On-Base Plus Slugging (OPS)", f"{player_data['OPS']:.3f}" if isinstance(player_data['OPS'], float) else str(player_data['OPS']))
+m4.metric("Production Output Volume", f"{player_data['HR']} HR / {player_data['RBI']} RBI")
+
+    ops_val = float(player_data["OPS"])
+    avg_val = float(player_data["AVG"])
+    kuzi_score = round(float(player_data["KUZI Rating"]), 1)
+    badge_color = '#ef4444' if kuzi_score >= 750 else '#1e3a8a'
+    st.markdown(f"""<div class="kuzi-badge-box" style="border-left-color: {badge_color};"><div style="font-size:0.9em; color:#9ca3af; text-transform:uppercase;">KUZI RATING SCORE</div><div style="font-size:2.8em; font-weight:900; color:#ffffff; line-height:1em; margin-top:5px;">{kuzi_score}</div><div style="font-size:1.1em; color:#ffffff; margin-top:10px;">Classification Status: {status_tag}</div></div>""", unsafe_allow_html=True)
 if kuzi_score >= 750:
-  st.balloons()
+    st.balloons()
 
 st.markdown("---")
 
