@@ -94,7 +94,7 @@ st.dataframe(df_leaderboard, use_container_width=True)
 st.markdown("---")
 
 # --- SECTION 3: PLAYER DEEP ANALYSIS PROFILE ---
-if selected_player:
+if   selected_player:
 lookup_key = selected_player.lower()
 player_data = LOCAL_MLB_DATABASE[lookup_key]
 st.markdown(f"### 🔍 Deep Analysis Profile Card: {selected_player}")
