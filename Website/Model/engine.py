@@ -84,8 +84,9 @@ LOCAL_TEAM_DATABASE = {
 
 # --- SECTION 1: MASTER CONTROLLER SELECT BOX ---
 st.markdown("### 🎯 Global Profile Core Selector")
-sorted_names = sorted([n.title() for n in LOCAL_MLB_DATABASE.keys()])
-selected_player = st.selectbox("Choose a Player to Analyze and Lock Into the System Grid:", options=sorted_names, index=sorted_names.index("Aaron Judge"))
+# Use the live database names once they are loaded below
+sorted_names = ["Aaron Judge"] # Temporary placeholder until data loads
+selected_player = st.selectbox("Choose a Player to Analyze and Lock Into the System Grid:", options=sorted_names)
 
 # --- PROCESS AUTOMATIC LEADERBOARD RATING MATRICES (FLATTENED ONE-LINER BLOCK) ---
 leaderboard_rows = []
