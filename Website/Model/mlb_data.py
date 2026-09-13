@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import random
 
 # 1. Page Configuration Setup
 st.set_page_config(page_title="KUZI Sports Analytics", page_icon="⚾", layout="wide")
@@ -20,6 +21,7 @@ st.markdown("""
     div[data-testid="stMetricLabel"] { font-size: 0.95em !important; color: #9ca3af !important; text-transform: uppercase; }
     .kuzi-badge-box { background: #111827; border-left: 5px solid #ef4444; padding: 20px; border-radius: 8px; margin-top: 15px; }
     .calc-container { background-color: #1f2937; padding: 20px; border-radius: 10px; border-top: 4px solid #38bdf8; }
+    .sim-container { background-color: #111827; padding: 20px; border-radius: 10px; border: 1px solid #374151; margin-top: 10px;}
     </style>
 """, unsafe_allow_html=True)
 
@@ -31,7 +33,7 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# 4. Core Local Database Asset Registry
+# 4. Master Local Databases (Players & Teams Matrices)
 LOCAL_MLB_DATABASE = {
     "aaron judge": {"id": "592450", "pos": "Outfielder", "games": 158, "avg": ".322", "ops": "1.159", "hr": 58, "rbi": 144},
     "shohei ohtani": {"id": "660271", "pos": "Designated Hitter", "games": 159, "avg": ".310", "ops": "1.036", "hr": 54, "rbi": 130},
@@ -42,6 +44,24 @@ LOCAL_MLB_DATABASE = {
     "ronald acuna jr.": {"id": "660670", "pos": "Outfielder", "games": 159, "avg": ".337", "ops": "1.012", "hr": 41, "rbi": 106},
     "freddie freeman": {"id": "518692", "pos": "First Baseman", "games": 147, "avg": ".282", "ops": ".854", "hr": 22, "rbi": 89}
 }
+
+LOCAL_TEAM_DATABASE = {
+    "New York Yankees": {"offense_rating": 8.8, "defense_rating": 7.9, "color": "#0C2340"},
+    "Los Angeles Dodgers": {"offense_rating": 9.2, "defense_rating": 8.1, "color": "#005A9C"},
+    "Houston Astros": {"offense_rating": 8.4, "defense_rating": 8.3, "color": "#EB6E1F"},
+    "Atlanta Braves": {"offense_rating": 8.1, "defense_rating": 8.6, "color": "#CE1141"},
+    "Baltimore Orioles": {"offense_rating": 8.6, "defense_rating": 7.8, "color": "#DF4601"},
+    "Philadelphia Phillies": {"offense_rating": 8.5, "defense_rating": 8.4, "color": "#E81828"}
+}
+
+# --- SIDEBAR INTERACTIVE MATCHUP SIMULATOR MODULE ---
+st.sidebar.header("🕹️ KUZI Matchup Simulator")
+st.sidebar.write("Project regular season outcome metrics between competing organizations.")
+
+away_team_sel = st.sidebar.selectbox("Select Away Team:", options=list(LOCAL_TEAM_DATABASE.keys()), index=0)
+home_team_sel = st.sidebar.selectbox("Select Home Team:", options=list(LOCAL_TEAM_DATABASE.keys()), index=1)
+
+sim_clicked = st.sidebar.button("⚡ Run Empirical Simulation")
 
 # --- PROCESS AUTOMATIC LEADERBOARD RATING MATRICES ---
 leaderboard_rows = []
@@ -59,9 +79,44 @@ for name, data in LOCAL_MLB_DATABASE.items():
         "KUZI Rating": calc_score
     })
 
-# Convert data and rank by rating from high to low
 df_leaderboard = pd.DataFrame(leaderboard_rows).sort_values(by="KUZI Rating", ascending=False).reset_index(drop=True)
 df_leaderboard.index += 1 
+
+# --- CONDITIONAL LAYOUT SWITCH IF SIMULATOR RUNS ---
+if sim_clicked:
+    st.markdown(f"### 🏟️ Simulation Projection Report: {away_team_sel} vs. {home_team_sel}")
+    
+    t1 = LOCAL_TEAM_DATABASE[away_team_sel]
+    t2 = LOCAL_TEAM_DATABASE[home_team_sel]
+    
+    # Kuzi algorithmic variance simulator logic
+    random.seed(len(away_team_sel) + len(home_team_sel))
+    away_base_runs = (t1["offense_rating"] * 0.6) + ((10 - t2["defense_rating"]) * 0.4)
+    home_base_runs = (t2["offense_rating"] * 0.6) + ((10 - t1["defense_rating"]) * 0.4) + 0.3 # Include home field advantage metric
+    
+    away_final_score = max(0, int(round(random.gauss(away_base_runs, 1.8))))
+    home_final_score = max(0, int(round(random.gauss(home_base_runs, 1.8))))
+    
+    if away_final_score == home_final_score:
+        home_final_score += 1 # Extra innings tie breaker simulation
+        
+    total_rating = t1["offense_rating"] + t2["offense_rating"]
+    home_win_prob = round((home_base_runs / (away_base_runs + home_base_runs)) * 100, 1)
+    away_win_prob = round(100 - home_win_prob, 1)
+    
+    sc1, sc2, sc3 = st.columns(3)
+    sc1.metric(f"🏃 {away_team_sel} (Away)", away_final_score, f"Win Prob: {away_win_prob}%")
+    sc2.markdown("<h1 style='text-align: center; color: #9ca3af;'>FINAL SCORE</h1>", unsafe_allow_html=True)
+    sc3.metric(f"🏠 {home_team_sel} (Home)", home_final_score, f"Win Prob: {home_win_prob}%")
+    
+    winner = home_team_sel if home_final_score > away_final_score else away_team_sel
+    st.markdown(f"""
+        <div class="sim-container" style="border-left: 5px solid #38bdf8;">
+            🎉 <b>Simulation Verdict:</b> The KUZI Engine projects <b>{winner}</b> to secure the victory in this matchup interface. 
+            Historical asset variance runs point to an expected total run value of <b>{away_final_score + home_final_score} runs</b>.
+        </div>
+    """, unsafe_allow_html=True)
+    st.markdown("---")
 
 # Split visual layout into Leaderboard Table and Chart Matrix side-by-side
 col_table, col_chart = st.columns(2)
@@ -91,7 +146,7 @@ with col_chart:
 
 st.markdown("---")
 
-# 5. Interactive Deep Search Bar Input Field & Betting Analytics Engine Splits
+# Interactive Deep Search Bar Input Field & Betting Analytics Engine Splits
 c_left, c_right = st.columns(2)
 
 with c_left:
@@ -106,7 +161,6 @@ with c_left:
             
             st.markdown(f"<div style='padding:12px; background-color:#1e3a8a; border-radius:8px; color:#f8fafc; font-weight:600; margin-bottom:20px;'>📊 Asset Analysis: {player_query.title()}</div>", unsafe_allow_html=True)
             
-            # Render Metrics Grid
             m1, m2 = st.columns(2)
             m1.metric("Games / Position", f"{player_data['games']} G | {player_data['pos']}")
             m2.metric("Batting Average", player_data["avg"])
@@ -115,7 +169,6 @@ with c_left:
             m3.metric("On-Base Plus Slugging (OPS)", player_data["ops"])
             m4.metric("Production Output", f"{player_data['hr']} HR / {player_data['rbi']} RBI")
             
-            # Recalculate rating score badge
             ops_val = float(player_data["ops"])
             avg_val = float(player_data["avg"])
             kuzi_score = round((ops_val * 500) + (avg_val * 1000) + (player_data["hr"] * 3) + (player_data["rbi"] * 1.5), 1)
@@ -130,9 +183,6 @@ with c_left:
                     <div style="font-size:1.1em; color:#ffffff; margin-top:10px;">Classification: {status_tag}</div>
                 </div>
             """, unsafe_allow_html=True)
-            
-            if kuzi_score >= 750:
-                st.balloons()
         else:
             st.warning(f"⚠️ Profile '{player_query}' is currently unindexed.")
 
@@ -140,23 +190,6 @@ with c_right:
     st.markdown("### 🧮 Implied Probability Valuation Calculator")
     st.write("Convert American Odds lines instantly to identify break-even baseline targets.")
     
-    # User inputs a standard betting line slider/number field
     odds_input = st.number_input("Enter American Moneyline Odds (e.g., -110, +150):", value=-110, step=5)
     
-    # Calculate break-even implied percentage mathematically
     if odds_input < 0:
-        implied_prob = (-odds_input) / (-odds_input + 100)
-    else:
-        implied_prob = 100 / (odds_input + 100)
-        
-    pct_format = round(implied_prob * 100, 1)
-    
-    st.markdown(f"""
-        <div class="calc-container">
-            <div style="font-size:0.9em; color:#9ca3af; text-transform:uppercase;">Break-Even Win Probability Required</div>
-            <div style="font-size:3em; font-weight:900; color:#38bdf8; margin-top:5px;">{pct_format}%</div>
-            <p style="font-size:0.95em; color:#cbd5e1; margin-top:10px;">
-                If your proprietary analytical model projects this matchup's success rate to be higher than <b>{pct_format}%</b>, the selection holds positive long-term expected value (+EV).
-            </p>
-        </div>
-    """, unsafe_allow_html=True)
