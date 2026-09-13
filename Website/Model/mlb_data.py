@@ -149,11 +149,11 @@ if sim_clicked:
     """, unsafe_allow_html=True)
     st.markdown("---")
 
-# Split visual layout into Leaderboard Table and Chart Matrix side-by-side
-col_table, col_chart = st.columns(2)
+# --- COMPLETELY FLATTENED MAIN DASHBOARD COMPONENT ---
+st.markdown("### 🏆 Global KUZI Index Leaderboard")
+st.dataframe(df_leaderboard, use_container_width=True)
 
-with col_table:
-    st.markdown("### 🏆 Global KUZI Index Leaderboard")
-    st.dataframe(df_leaderboard, use_container_width=True)
-
-with col_chart:
+st.markdown("### 📊 Valuation Index Variance Comparison")
+fig = px.bar(
+    df_leaderboard, 
+    x="KUZI Rating", 
