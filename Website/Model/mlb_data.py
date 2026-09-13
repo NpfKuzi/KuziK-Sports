@@ -33,28 +33,25 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# 4. Master Local Databases (Expanded Player Profiles & Team Matrices)
+# 4. Master Local Databases (Sanitized & Flattened Data Structures)
 LOCAL_MLB_DATABASE = {
-    # --- PREMIER ELITE HITTERS ---
     "aaron judge": {"id": "592450", "pos": "Outfielder", "games": 158, "avg": ".322", "ops": "1.159", "hr": 58, "rbi": 144},
     "shohei ohtani": {"id": "660271", "pos": "Designated Hitter", "games": 159, "avg": ".310", "ops": "1.036", "hr": 54, "rbi": 130},
     "juan soto": {"id": "665742", "pos": "Outfielder", "games": 157, "avg": ".288", "ops": ".989", "hr": 41, "rbi": 109},
-    "bobby witt jr.": {"id": "677951", "pos": "Shortstop", "games": 161, "avg": ".332", "ops": ".977", "hr": 32, "rbi": 109},
-    "mookie betts": {"id": "605141", "pos": "Shortstop/Outfield", "games": 116, "avg": ".289", "ops": ".863", "hr": 19, "rbi": 75},
+    "bobby witt jr": {"id": "677951", "pos": "Shortstop", "games": 161, "avg": ".332", "ops": ".977", "hr": 32, "rbi": 109},
+    "mookie betts": {"id": "605141", "pos": "Shortstop", "games": 116, "avg": ".289", "ops": ".863", "hr": 19, "rbi": 75},
     "bryce harper": {"id": "547180", "pos": "First Baseman", "games": 145, "avg": ".285", "ops": ".898", "hr": 30, "rbi": 87},
-    "ronald acuna jr.": {"id": "660670", "pos": "Outfielder", "games": 159, "avg": ".337", "ops": "1.012", "hr": 41, "rbi": 106},
+    "ronald acuna jr": {"id": "660670", "pos": "Outfielder", "games": 159, "avg": ".337", "ops": "1.012", "hr": 41, "rbi": 106},
     "freddie freeman": {"id": "518692", "pos": "First Baseman", "games": 147, "avg": ".282", "ops": ".854", "hr": 22, "rbi": 89},
-    
-    # --- ADDED SLUGGER COHORT ---
     "kyle schwarber": {"id": "656941", "pos": "Designated Hitter", "games": 142, "avg": ".238", "ops": ".890", "hr": 44, "rbi": 92},
-    "pete crow-armstrong": {"id": "691718", "pos": "Center Fielder", "games": 149, "avg": ".279", "ops": ".875", "hr": 41, "rbi": 98},
-    "yordan alvarez": {"id": "670541", "pos": "Outfielder/DH", "games": 145, "avg": ".310", "ops": ".955", "hr": 38, "rbi": 96},
+    "pete crow armstrong": {"id": "691718", "pos": "Center Fielder", "games": 149, "avg": ".279", "ops": ".875", "hr": 41, "rbi": 98},
+    "yordan alvarez": {"id": "670541", "pos": "Outfielder", "games": 145, "avg": ".310", "ops": ".955", "hr": 38, "rbi": 96},
     "matt olson": {"id": "621566", "pos": "First Baseman", "games": 148, "avg": ".249", "ops": ".830", "hr": 38, "rbi": 82},
     "junior caminero": {"id": "691406", "pos": "Third Baseman", "games": 147, "avg": ".279", "ops": ".860", "hr": 40, "rbi": 95},
     "pete alonso": {"id": "624413", "pos": "First Baseman", "games": 149, "avg": ".266", "ops": ".850", "hr": 35, "rbi": 99},
     "rafael devers": {"id": "646240", "pos": "Third Baseman", "games": 148, "avg": ".258", "ops": ".870", "hr": 37, "rbi": 98},
     "james wood": {"id": "695578", "pos": "Right Fielder", "games": 123, "avg": ".266", "ops": ".845", "hr": 30, "rbi": 75},
-    "vladimir guerrero jr.": {"id": "665489", "pos": "First Baseman", "games": 159, "avg": ".323", "ops": ".940", "hr": 30, "rbi": 103},
+    "vladimir guerrero jr": {"id": "665489", "pos": "First Baseman", "games": 159, "avg": ".323", "ops": ".940", "hr": 30, "rbi": 103},
     "gunnar henderson": {"id": "683002", "pos": "Shortstop", "games": 156, "avg": ".281", "ops": ".895", "hr": 37, "rbi": 92},
     "jose ramirez": {"id": "608070", "pos": "Third Baseman", "games": 158, "avg": ".279", "ops": ".865", "hr": 39, "rbi": 118},
     "marcell ozuna": {"id": "542303", "pos": "Designated Hitter", "games": 155, "avg": ".302", "ops": ".925", "hr": 39, "rbi": 104},
@@ -103,12 +100,12 @@ leaderboard_rows = []
 for name, data in LOCAL_MLB_DATABASE.items():
     ops_v = float(data["ops"])
     avg_v = float(data["avg"])
-    calc_score = round((ops_v * 500) + (avg_v * 1000) + (data["hr"] * 3) + (data["rbi"] * 1.5), 1)
+    calc_score = round((ops_v * 500) + (avg_v * 1000) + (int(data["hr"]) * 3) + (int(data["rbi"]) * 1.5), 1)
     leaderboard_rows.append({
         "Player Name": name.title(),
         "Position": data["pos"],
-        "HR": data["hr"],
-        "RBI": data["rbi"],
+        "HR": int(data["hr"]),
+        "RBI": int(data["rbi"]),
         "AVG": data["avg"],
         "OPS": data["ops"],
         "KUZI Rating": calc_score
@@ -157,3 +154,6 @@ col_table, col_chart = st.columns(2)
 
 with col_table:
     st.markdown("### 🏆 Global KUZI Index Leaderboard")
+    st.dataframe(df_leaderboard, use_container_width=True)
+
+with col_chart:
