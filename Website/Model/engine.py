@@ -1,5 +1,5 @@
-import statsAPI
 import streamlit as st
+import requests
 import sys
 import os
 
