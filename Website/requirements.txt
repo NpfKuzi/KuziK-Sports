@@ -1,2 +1,2 @@
-MLB-statsAPI
-pandas
+streamlit
+MLB-StatsAPI
