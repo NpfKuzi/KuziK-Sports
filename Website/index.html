@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Kuzi Sports Analytics</title>
+
+<style>
+body {
+font-family: Arial, sans-serif;
+background: #111;
+color: white;
+padding: 30px;
+}
+
+h1 {
+text-align: center;
+}
+
+.player {
+background: #222;
+padding: 20px;
+margin: 15px 0;
+border-radius: 10px;
+cursor: pointer;
+}
+
+.player:hover {
+background: #333;
+}
+
+.details {
+display: none;
+background: #181818;
+padding: 15px;
+margin-top: 10px;
+border-radius: 8px;
+}
+
+.probability {
+font-size: 30px;
+font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<h1>KUZI SPORTS ANALYTICS</h1>
+
+<h2>MLB DAILY ANALYTICS</h2>
+
+<hr>
+
+<h2>🔥 TOP HOME RUN TARGETS</h2>
+
+<div class="player" onclick="showPlayer('player1')">
+<h3>Player A</h3>
+<p class="probability">28%</p>
+<p>HR Probability</p>
+
+<div id="player1" class="details">
+<p>Barrel Rate: 14.2%</p>
+<p>Hard-Hit Rate: 51.3%</p>
+<p>Exit Velocity: 92.8 MPH</p>
+<p>ISO: .285</p>
+<p>Pitcher Matchup: Favorable</p>
+</div>
+</div>
+
+
+<div class="player" onclick="showPlayer('player2')">
+<h3>Player B</h3>
+<p class="probability">26%</p>
+<p>HR Probability</p>
+
+<div id="player2" class="details">
+<p>Barrel Rate: 12.8%</p>
+<p>Hard-Hit Rate: 48.9%</p>
+<p>Exit Velocity: 91.7 MPH</p>
+<p>ISO: .267</p>
+<p>Pitcher Matchup: Favorable</p>
+</div>
+</div>
+
+
+<div class="player" onclick="showPlayer('player3')">
+<h3>Player C</h3>
+<p class="probability">24%</p>
+<p>HR Probability</p>
+
+<div id="player3" class="details">
+<p>Barrel Rate: 11.9%</p>
+<p>Hard-Hit Rate: 47.4%</p>
+<p>Exit Velocity: 91.2 MPH</p>
+<p>ISO: .251</p>
+<p>Pitcher Matchup: Neutral</p>
+</div>
+</div>
+
+
+<script>
+function showPlayer(player) {
+
+let details = document.getElementById(player);
+
+if (details.style.display === "block") {
+details.style.display = "none";
+} else {
+details.style.display = "block";
+}
+
+}
+</script>
+
+</body>
+</html>
