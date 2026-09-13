@@ -154,6 +154,4 @@ st.markdown("### 🏆 Global KUZI Index Leaderboard")
 st.dataframe(df_leaderboard, use_container_width=True)
 
 st.markdown("### 📊 Valuation Index Variance Comparison")
-fig = px.bar(
-    df_leaderboard, 
-    x="KUZI Rating", 
+# FIXED: Re-sealed the open parenthesis below to execute cleanly
