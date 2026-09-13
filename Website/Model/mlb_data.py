@@ -65,7 +65,6 @@ st.sidebar.markdown("---")
 st.sidebar.subheader("🎛️ Custom Model Weighting")
 st.sidebar.write("Adjust parameters to shift simulation weight distribution.")
 
-# 🌟 NEW ADDITION: Sliders to let users tweak the math parameters
 defense_weight = st.sidebar.slider("Defense/Pitching Weight", min_value=10, max_value=90, value=40, step=5) / 100.0
 home_field_edge = st.sidebar.slider("Home Field Advantage Run Edge", min_value=0.0, max_value=1.5, value=0.3, step=0.1)
 
@@ -102,7 +101,6 @@ if sim_clicked:
     
     random.seed(len(away_team_sel) + len(home_team_sel))
     
-    # 🌟 MODIFIED CALCULATION USING CUSTOM SLIDER WEIGHTS
     away_base_runs = (t1["offense_rating"] * offense_weight) + ((10 - t2["defense_rating"]) * defense_weight)
     home_base_runs = (t2["offense_rating"] * offense_weight) + ((10 - t1["defense_rating"]) * defense_weight) + home_field_edge
     
@@ -193,3 +191,6 @@ with c_left:
                     <div style="font-size:2.8em; font-weight:900; color:#ffffff; line-height:1em; margin-top:5px;">{kuzi_score}</div>
                     <div style="font-size:1.1em; color:#ffffff; margin-top:10px;">Classification: {status_tag}</div>
                 </div>
+            """, unsafe_allow_html=True)
+        else:
+            st.warning(f"⚠️ Profile '{player_query}' is currently unindexed.")
