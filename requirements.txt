@@ -1,2 +1,2 @@
-python-mlb-statsapi
+MLB- StatsAPI
 pandas
