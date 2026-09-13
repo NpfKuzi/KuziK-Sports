@@ -33,16 +33,41 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# 4. Master Local Databases (Players & Teams Matrices)
+# 4. Master Local Databases (Expanded Player Profiles & Team Matrices)
 LOCAL_MLB_DATABASE = {
+    # --- PREMIER ELITE HITTERS ---
     "aaron judge": {"id": "592450", "pos": "Outfielder", "games": 158, "avg": ".322", "ops": "1.159", "hr": 58, "rbi": 144},
     "shohei ohtani": {"id": "660271", "pos": "Designated Hitter", "games": 159, "avg": ".310", "ops": "1.036", "hr": 54, "rbi": 130},
-    "mookie betts": {"id": "605141", "pos": "Shortstop/Outfield", "games": 116, "avg": ".289", "ops": ".863", "hr": 19, "rbi": 75},
     "juan soto": {"id": "665742", "pos": "Outfielder", "games": 157, "avg": ".288", "ops": ".989", "hr": 41, "rbi": 109},
-    "bryce harper": {"id": "547180", "pos": "First Baseman", "games": 145, "avg": ".285", "ops": ".898", "hr": 30, "rbi": 87},
     "bobby witt jr.": {"id": "677951", "pos": "Shortstop", "games": 161, "avg": ".332", "ops": ".977", "hr": 32, "rbi": 109},
+    "mookie betts": {"id": "605141", "pos": "Shortstop/Outfield", "games": 116, "avg": ".289", "ops": ".863", "hr": 19, "rbi": 75},
+    "bryce harper": {"id": "547180", "pos": "First Baseman", "games": 145, "avg": ".285", "ops": ".898", "hr": 30, "rbi": 87},
     "ronald acuna jr.": {"id": "660670", "pos": "Outfielder", "games": 159, "avg": ".337", "ops": "1.012", "hr": 41, "rbi": 106},
-    "freddie freeman": {"id": "518692", "pos": "First Baseman", "games": 147, "avg": ".282", "ops": ".854", "hr": 22, "rbi": 89}
+    "freddie freeman": {"id": "518692", "pos": "First Baseman", "games": 147, "avg": ".282", "ops": ".854", "hr": 22, "rbi": 89},
+    
+    # --- ADDED SLUGGER COHORT ---
+    "kyle schwarber": {"id": "656941", "pos": "Designated Hitter", "games": 142, "avg": ".238", "ops": ".890", "hr": 44, "rbi": 92},
+    "pete crow-armstrong": {"id": "691718", "pos": "Center Fielder", "games": 149, "avg": ".279", "ops": ".875", "hr": 41, "rbi": 98},
+    "yordan alvarez": {"id": "670541", "pos": "Outfielder/DH", "games": 145, "avg": ".310", "ops": ".955", "hr": 38, "rbi": 96},
+    "matt olson": {"id": "621566", "pos": "First Baseman", "games": 148, "avg": ".249", "ops": ".830", "hr": 38, "rbi": 82},
+    "junior caminero": {"id": "691406", "pos": "Third Baseman", "games": 147, "avg": ".279", "ops": ".860", "hr": 40, "rbi": 95},
+    "pete alonso": {"id": "624413", "pos": "First Baseman", "games": 149, "avg": ".266", "ops": ".850", "hr": 35, "rbi": 99},
+    "rafael devers": {"id": "646240", "pos": "Third Baseman", "games": 148, "avg": ".258", "ops": ".870", "hr": 37, "rbi": 98},
+    "james wood": {"id": "695578", "pos": "Right Fielder", "games": 123, "avg": ".266", "ops": ".845", "hr": 30, "rbi": 75},
+    "vladimir guerrero jr.": {"id": "665489", "pos": "First Baseman", "games": 159, "avg": ".323", "ops": ".940", "hr": 30, "rbi": 103},
+    "gunnar henderson": {"id": "683002", "pos": "Shortstop", "games": 156, "avg": ".281", "ops": ".895", "hr": 37, "rbi": 92},
+    "jose ramirez": {"id": "608070", "pos": "Third Baseman", "games": 158, "avg": ".279", "ops": ".865", "hr": 39, "rbi": 118},
+    "marcell ozuna": {"id": "542303", "pos": "Designated Hitter", "games": 155, "avg": ".302", "ops": ".925", "hr": 39, "rbi": 104},
+    "corey seager": {"id": "608369", "pos": "Shortstop", "games": 123, "avg": ".278", "ops": ".860", "hr": 30, "rbi": 74},
+    "francisco lindor": {"id": "596019", "pos": "Shortstop", "games": 152, "avg": ".273", "ops": ".840", "hr": 31, "rbi": 86},
+    "elly de la cruz": {"id": "682829", "pos": "Shortstop", "games": 160, "avg": ".259", "ops": ".805", "hr": 25, "rbi": 71},
+    "will smith": {"id": "669221", "pos": "Catcher", "games": 128, "avg": ".248", "ops": ".770", "hr": 20, "rbi": 75},
+    "corbin carroll": {"id": "672695", "pos": "Outfielder", "games": 155, "avg": ".231", "ops": ".750", "hr": 22, "rbi": 68},
+    "trea turner": {"id": "607208", "pos": "Shortstop", "games": 115, "avg": ".295", "ops": ".815", "hr": 21, "rbi": 62},
+    "manny machado": {"id": "592518", "pos": "Third Baseman", "games": 152, "avg": ".275", "ops": ".825", "hr": 29, "rbi": 105},
+    "william contreras": {"id": "661388", "pos": "Catcher", "games": 155, "avg": ".281", "ops": ".820", "hr": 23, "rbi": 92},
+    "adley rutschman": {"id": "668939", "pos": "Catcher", "games": 148, "avg": ".250", "ops": ".760", "hr": 19, "rbi": 79},
+    "riley greene": {"id": "682985", "pos": "Outfielder", "games": 135, "avg": ".262", "ops": ".825", "hr": 24, "rbi": 74}
 }
 
 LOCAL_TEAM_DATABASE = {
@@ -132,65 +157,3 @@ col_table, col_chart = st.columns(2)
 
 with col_table:
     st.markdown("### 🏆 Global KUZI Index Leaderboard")
-    st.dataframe(df_leaderboard, use_container_width=True)
-
-with col_chart:
-    st.markdown("### 📊 Valuation Index Variance Comparison")
-    fig = px.bar(
-        df_leaderboard, 
-        x="KUZI Rating", 
-        y="Player Name", 
-        orientation="h",
-        color="KUZI Rating",
-        color_continuous_scale=["#1e3a8a", "#7f1d1d"]
-    )
-    fig.update_layout(
-        paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(0,0,0,0)",
-        font_color="#ffffff",
-        yaxis={"categoryorder": "total ascending"},
-        margin=dict(l=20, r=20, t=20, b=20)
-    )
-    st.plotly_chart(fig, use_container_width=True)
-
-st.markdown("---")
-
-# Interactive Deep Search Bar Input Field & Betting Analytics Engine Splits
-c_left, c_right = st.columns(2)
-
-with c_left:
-    st.markdown("### 🔍 Player Deep Analysis Profile")
-    player_query = st.text_input("Select or Enter MLB Player Name:", value="Aaron Judge")
-
-    if player_query:
-        lookup_key = player_query.strip().lower()
-        
-        if lookup_key in LOCAL_MLB_DATABASE:
-            player_data = LOCAL_MLB_DATABASE[lookup_key]
-            
-            st.markdown(f"<div style='padding:12px; background-color:#1e3a8a; border-radius:8px; color:#f8fafc; font-weight:600; margin-bottom:20px;'>📊 Asset Analysis: {player_query.title()}</div>", unsafe_allow_html=True)
-            
-            m1, m2 = st.columns(2)
-            m1.metric("Games / Position", f"{player_data['games']} G | {player_data['pos']}")
-            m2.metric("Batting Average", player_data["avg"])
-            
-            m3, m4 = st.columns(2)
-            m3.metric("On-Base Plus Slugging (OPS)", player_data["ops"])
-            m4.metric("Production Output", f"{player_data['hr']} HR / {player_data['rbi']} RBI")
-            
-            ops_val = float(player_data["ops"])
-            avg_val = float(player_data["avg"])
-            kuzi_score = round((ops_val * 500) + (avg_val * 1000) + (player_data["hr"] * 3) + (player_data["rbi"] * 1.5), 1)
-            
-            status_tag = "<span style='color:#ef4444; font-weight:800;'>ELITE LAYER</span>" if kuzi_score >= 750 else "<span style='color:#38bdf8; font-weight:800;'>STANDARD PRODUCTION</span>"
-            badge_color = '#ef4444' if kuzi_score >= 750 else '#1e3a8a'
-            
-            st.markdown(f"""
-                <div class="kuzi-badge-box" style="border-left-color: {badge_color};">
-                    <div style="font-size:0.9em; color:#9ca3af; text-transform:uppercase;">KUZI RATING SCORE</div>
-                    <div style="font-size:2.8em; font-weight:900; color:#ffffff; line-height:1em; margin-top:5px;">{kuzi_score}</div>
-                    <div style="font-size:1.1em; color:#ffffff; margin-top:10px;">Classification: {status_tag}</div>
-                </div>
-            """, unsafe_allow_html=True)
-        else:
-            st.warning(f"⚠️ Profile '{player_query}' is currently unindexed.")
