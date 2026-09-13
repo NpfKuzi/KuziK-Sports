@@ -78,7 +78,6 @@ LOCAL_TEAM_DATABASE = {
 # --- SECTION 1: MASTER CONTROLLER SELECT BOX ---
 st.markdown("### 🎯 Global Profile Core Selector")
 sorted_names = sorted([n.title() for n in LOCAL_MLB_DATABASE.keys()])
-# This control box sits right at the top and manages the entire app flawlessly
 selected_player = st.selectbox("Choose a Player to Analyze and Lock Into the System Grid:", options=sorted_names, index=sorted_names.index("Aaron Judge"))
 
 # --- PROCESS AUTOMATIC LEADERBOARD RATING MATRICES ---
@@ -105,7 +104,7 @@ st.markdown("### 🏆 Global KUZI Index Leaderboard")
 st.dataframe(df_leaderboard, use_container_width=True)
 st.markdown("---")
 
-# --- SECTION 3: PLAYER DEEP ANALYSIS PROFILE (SNAP-UPDATED FROM BOX ABOVE) ---
+# --- SECTION 3: PLAYER DEEP ANALYSIS PROFILE ---
 if selected_player:
 lookup_key = selected_player.lower()
 player_data = LOCAL_MLB_DATABASE[lookup_key]
@@ -155,3 +154,4 @@ st.markdown(f"""
 <div style="font-size:0.9em; color:#9ca3af; text-transform:uppercase;">Break-Even Win Probability Required</div>
 <div style="font-size:3em; font-weight:900; color:#38bdf8; margin-top:5px;">{pct_format}%</div>
 </div>
+""", unsafe_allow_html=True)
