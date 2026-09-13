@@ -121,9 +121,9 @@ st.markdown("---")
 
 # --- SECTION 3: PLAYER DEEP ANALYSIS PROFILE ---
 if   selected_player:
- # Look up the selected player's row inside your live data table
-player_match = df_leaderboard[df_leaderboard["Player Name"] == selected_player]
-player_data = player_match.iloc[0] if not player_match.empty else None
+    # Look up the selected player's row inside your live data table
+    player_match = df_leaderboard[df_leaderboard["Player Name"] == selected_player]
+    player_data = player_match.iloc[0] if not player_match.empty else None
 
 st.markdown(f"### 🔍 Deep Analysis Profile Card: {selected_player}")
 st.markdown(f"<div style='padding:12px; background-color:#1e3a8a; border-radius:8px; color:#f8fafc; font-weight:600; margin-bottom:20px;'>📊 Connected Identity: {selected_player} (ID: {player_data['id']})</div>", unsafe_allow_html=True)
