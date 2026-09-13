@@ -54,13 +54,24 @@ LOCAL_TEAM_DATABASE = {
     "Philadelphia Phillies": {"offense_rating": 8.5, "defense_rating": 8.4, "color": "#E81828"}
 }
 
-# --- SIDEBAR INTERACTIVE MATCHUP SIMULATOR MODULE ---
+# --- SIDEBAR INTERACTIVE MODULES ---
 st.sidebar.header("🕹️ KUZI Matchup Simulator")
-st.sidebar.write("Project regular season outcome metrics between competing organizations.")
+st.sidebar.write("Project outcomes between competing organizations.")
 
 away_team_sel = st.sidebar.selectbox("Select Away Team:", options=list(LOCAL_TEAM_DATABASE.keys()), index=0)
 home_team_sel = st.sidebar.selectbox("Select Home Team:", options=list(LOCAL_TEAM_DATABASE.keys()), index=1)
 
+st.sidebar.markdown("---")
+st.sidebar.subheader("🎛️ Custom Model Weighting")
+st.sidebar.write("Adjust parameters to shift simulation weight distribution.")
+
+# 🌟 NEW ADDITION: Sliders to let users tweak the math parameters
+defense_weight = st.sidebar.slider("Defense/Pitching Weight", min_value=10, max_value=90, value=40, step=5) / 100.0
+home_field_edge = st.sidebar.slider("Home Field Advantage Run Edge", min_value=0.0, max_value=1.5, value=0.3, step=0.1)
+
+offense_weight = 1.0 - defense_weight
+
+st.sidebar.markdown("---")
 sim_clicked = st.sidebar.button("⚡ Run Empirical Simulation")
 
 # --- PROCESS AUTOMATIC LEADERBOARD RATING MATRICES ---
@@ -89,18 +100,18 @@ if sim_clicked:
     t1 = LOCAL_TEAM_DATABASE[away_team_sel]
     t2 = LOCAL_TEAM_DATABASE[home_team_sel]
     
-    # Kuzi algorithmic variance simulator logic
     random.seed(len(away_team_sel) + len(home_team_sel))
-    away_base_runs = (t1["offense_rating"] * 0.6) + ((10 - t2["defense_rating"]) * 0.4)
-    home_base_runs = (t2["offense_rating"] * 0.6) + ((10 - t1["defense_rating"]) * 0.4) + 0.3 # Include home field advantage metric
+    
+    # 🌟 MODIFIED CALCULATION USING CUSTOM SLIDER WEIGHTS
+    away_base_runs = (t1["offense_rating"] * offense_weight) + ((10 - t2["defense_rating"]) * defense_weight)
+    home_base_runs = (t2["offense_rating"] * offense_weight) + ((10 - t1["defense_rating"]) * defense_weight) + home_field_edge
     
     away_final_score = max(0, int(round(random.gauss(away_base_runs, 1.8))))
     home_final_score = max(0, int(round(random.gauss(home_base_runs, 1.8))))
     
     if away_final_score == home_final_score:
-        home_final_score += 1 # Extra innings tie breaker simulation
+        home_final_score += 1 
         
-    total_rating = t1["offense_rating"] + t2["offense_rating"]
     home_win_prob = round((home_base_runs / (away_base_runs + home_base_runs)) * 100, 1)
     away_win_prob = round(100 - home_win_prob, 1)
     
@@ -112,8 +123,8 @@ if sim_clicked:
     winner = home_team_sel if home_final_score > away_final_score else away_team_sel
     st.markdown(f"""
         <div class="sim-container" style="border-left: 5px solid #38bdf8;">
-            🎉 <b>Simulation Verdict:</b> The KUZI Engine projects <b>{winner}</b> to secure the victory in this matchup interface. 
-            Historical asset variance runs point to an expected total run value of <b>{away_final_score + home_final_score} runs</b>.
+            🎉 <b>Simulation Verdict:</b> The KUZI Engine projects <b>{winner}</b> to win using custom model parameters (<b>{int(offense_weight*100)}% Offense / {int(defense_weight*100)}% Defense</b> weighting mix). 
+            Expected total run value is <b>{away_final_score + home_final_score} runs</b>.
         </div>
     """, unsafe_allow_html=True)
     st.markdown("---")
@@ -182,14 +193,3 @@ with c_left:
                     <div style="font-size:2.8em; font-weight:900; color:#ffffff; line-height:1em; margin-top:5px;">{kuzi_score}</div>
                     <div style="font-size:1.1em; color:#ffffff; margin-top:10px;">Classification: {status_tag}</div>
                 </div>
-            """, unsafe_allow_html=True)
-        else:
-            st.warning(f"⚠️ Profile '{player_query}' is currently unindexed.")
-
-with c_right:
-    st.markdown("### 🧮 Implied Probability Valuation Calculator")
-    st.write("Convert American Odds lines instantly to identify break-even baseline targets.")
-    
-    odds_input = st.number_input("Enter American Moneyline Odds (e.g., -110, +150):", value=-110, step=5)
-    
-    if odds_input < 0:
