@@ -99,15 +99,24 @@ leaderboard_rows = []
 live_api_data = leader_url = "https://statsapi.mlb.com/api/v1/stats"
 
 params = {
-"stats": "season",
-"group": "hitting",
-"season": current_year,
-"sportIds": 1,
-"limit": 150,
-"sortStat": "onBasePlusSlugging"
+    "stats": "season",
+    "group": "hitting",
+    "season": current_year,
+    "sportIds": 1,
+    "limit": 150,
+    "sortStat": "onBasePlusSlugging"
 }
+from datetime import datetime 
+current year =datetime.now().year
+leader_url = "https://statsapi.mlb.com/api/v1/stats"
+params = {
+    "stats": "season"
+    "group": "hitting"
+    "season": current_year,
+    "sportIds": 1,
+    "limit": 150,
+    "sortStat": "onBasePlusSlugging"
 
-response = requests.get(leader_url, params=params, timeout=20)
 response.raise_for_status()
 
 leader_data = response.json()
