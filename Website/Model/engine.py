@@ -116,7 +116,7 @@ splits = leader_data.get("stats", [{}])[0].get("splits", [])
 
 live_api_data = []
 
-for    rank, split in enumerate(splits, start=1):
+for        rank, split in enumerate(splits, start=1):
 player = split.get("player", {})
 team = split.get("team", {})
 stat = split.get("stat", {})
